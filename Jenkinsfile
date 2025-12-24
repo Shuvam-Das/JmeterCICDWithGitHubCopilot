@@ -1,62 +1,65 @@
-pipeline {
-    agent any
-
-    // Define parameters to change workload dynamically at runtime
-    parameters {
-        string(name: 'THREAD_COUNT', defaultValue: '10', description: 'Number of Virtual Users')
-        string(name: 'RAMP_UP', defaultValue: '5', description: 'Ramp up time in seconds')
-        string(name: 'LOOP_COUNT', defaultValue: '2', description: 'Number of loops')
-        string(name: 'JMX_FILE', defaultValue: 'tests/load_test.jmx', description: 'Path to JMX file')
-    }
-
-    stages {
-        stage('Build JMeter Image') {
-            steps {
-                script {
-                    // Build the image locally so we have the latest version
-                    bat 'docker build -t my-jmeter-runner .'
-                }
-            }
-        }
-
-        stage('Run Performance Test') {
-            steps {
-                script {
-                    // Clean previous reports
-                    bat 'if exist report rmdir /s /q report'
-                    bat 'mkdir report'
-                    
-                    // Run JMeter in Docker
-                    // We mount the current workspace (${WORKSPACE}) to /jmeter inside the container
-                    bat """
-                        docker run --rm ^
-                        -v "${WORKSPACE}":/jmeter ^
-                        -w /jmeter ^
-                        my-jmeter-runner ^
-                        -n ^
-                        -t ${params.JMX_FILE} ^
-                        -l report/result.jtl ^
-                        -e -o report/html ^
-                        -Jthreads=${params.THREAD_COUNT} ^
-                        -Jrampup=${params.RAMP_UP} ^
-                        -Jloops=${params.LOOP_COUNT}
-                    """
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Publish the HTML Report to Jenkins UI
-            publishHTML(target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'report/html',
-                reportFiles: 'index.html',
-                reportName: 'JMeter Dashboard'
-            ])
-        }
-    }
-}
+Found unhandled java.io.IOException exception:
+Cannot run program "sh" (in directory "C:\ProgramData\Jenkins\.jenkins\workspace\JMeter-Local-Test"): CreateProcess error=2, The system cannot find the file specified
+	java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1112)
+	java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1046)
+	hudson.Proc$LocalProc.(Proc.java:252)
+	hudson.Proc$LocalProc.(Proc.java:221)
+	hudson.Launcher$LocalLauncher.launch(Launcher.java:995)
+	hudson.Launcher$ProcStarter.start(Launcher.java:507)
+	PluginClassLoader for durable-task//org.jenkinsci.plugins.durabletask.BourneShellScript.launchWithCookie(BourneShellScript.java:179)
+	PluginClassLoader for durable-task//org.jenkinsci.plugins.durabletask.FileMonitoringTask.launch(FileMonitoringTask.java:132)
+	PluginClassLoader for workflow-durable-task-step//org.jenkinsci.plugins.workflow.steps.durable_task.DurableTaskStep$Execution.start(DurableTaskStep.java:330)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.DSL.invokeStep(DSL.java:333)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.DSL.invokeMethod(DSL.java:194)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsScript.invokeMethod(CpsScript.java:124)
+	java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:98)
+	groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:325)
+	groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1225)
+	groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1034)
+	org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.call(PogoMetaClassSite.java:41)
+	org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:47)
+	org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:116)
+	PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker$1.call(Checker.java:180)
+	PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.GroovyInterceptor.onMethodCall(GroovyInterceptor.java:23)
+	PluginClassLoader for script-security//org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SandboxInterceptor.onMethodCall(SandboxInterceptor.java:163)
+	PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker$1.call(Checker.java:178)
+	PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker.checkedCall(Checker.java:182)
+	PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker.checkedCall(Checker.java:152)
+	PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker.checkedCall(Checker.java:152)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.sandbox.SandboxInvoker.methodCall(SandboxInvoker.java:17)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.LoggingInvoker.methodCall(LoggingInvoker.java:120)
+	WorkflowScript.run(WorkflowScript:17)
+	___cps.transform___(Native Method)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.ContinuationGroup.methodCall(ContinuationGroup.java:107)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.dispatchOrArg(FunctionCallBlock.java:118)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.fixArg(FunctionCallBlock.java:87)
+	java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:71)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.ConstantBlock.eval(ConstantBlock.java:21)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.Next.step(Next.java:84)
+	PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.Continuable.run0(Continuable.java:142)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.SandboxContinuable.access$001(SandboxContinuable.java:17)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.SandboxContinuable.run0(SandboxContinuable.java:48)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThread.runNextChunk(CpsThread.java:188)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.run(CpsThreadGroup.java:464)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:372)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:302)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService.lambda$wrap$4(CpsVmExecutorService.java:143)
+	java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	hudson.remoting.SingleLaneExecutorService$1.run(SingleLaneExecutorService.java:139)
+	jenkins.util.ContextResettingExecutorService$1.run(ContextResettingExecutorService.java:28)
+	jenkins.security.ImpersonatingExecutorService$1.run(ImpersonatingExecutorService.java:68)
+	jenkins.util.ErrorLoggingExecutorService.lambda$wrap$0(ErrorLoggingExecutorService.java:51)
+	java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545)
+	java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$1.call(CpsVmExecutorService.java:53)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$1.call(CpsVmExecutorService.java:50)
+	org.codehaus.groovy.runtime.GroovyCategorySupport$ThreadCategoryInfo.use(GroovyCategorySupport.java:136)
+	org.codehaus.groovy.runtime.GroovyCategorySupport.use(GroovyCategorySupport.java:275)
+	PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService.lambda$categoryThreadFactory$0(CpsVmExecutorService.java:50)
+	java.base/java.lang.Thread.run(Thread.java:1474)
