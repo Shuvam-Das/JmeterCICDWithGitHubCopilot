@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    // Force Jenkins to use TCP to connect to Docker Desktop (bypassing the named pipe issue)
+    environment {
+        DOCKER_HOST = 'tcp://localhost:2375'
+    }
+
     // Define parameters to change workload dynamically at runtime
     parameters {
         string(name: 'THREAD_COUNT', defaultValue: '10', description: 'Number of Virtual Users')
