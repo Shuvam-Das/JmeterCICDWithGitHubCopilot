@@ -84,7 +84,7 @@
                 </elementProp>
                 <elementProp name="Referer" elementType="Header">
                   <stringProp name="Header.name">Referer</stringProp>
-                  <stringProp name="Header.value">https://petstore.octoperf.com/</stringProp>
+                  <stringProp name="Header.value">https://${host}/actions/Cart.action?addItemToCart=&amp;workingItemId=EST-14</stringProp>
                 </elementProp>
                 <elementProp name="Sec-Fetch-Site" elementType="Header">
                   <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
@@ -190,7 +190,7 @@
                 </elementProp>
                 <elementProp name="Referer" elementType="Header">
                   <stringProp name="Header.name">Referer</stringProp>
-                  <stringProp name="Header.value">https://${host}/actions/Catalog.action</stringProp>
+                  <stringProp name="Header.value">https://${host}/actions/Account.action?signoff=</stringProp>
                 </elementProp>
                 <elementProp name="Sec-Fetch-Site" elementType="Header">
                   <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
@@ -406,7 +406,7 @@
                 </elementProp>
                 <elementProp name="Referer" elementType="Header">
                   <stringProp name="Header.name">Referer</stringProp>
-                  <stringProp name="Header.value">https://${host}/actions/Account.action?signonForm=</stringProp>
+                  <stringProp name="Header.value">https://${host}/actions/Order.action?newOrder=&amp;confirmed=true</stringProp>
                 </elementProp>
                 <elementProp name="Sec-Fetch-Site" elementType="Header">
                   <stringProp name="Header.name">Sec-Fetch-Site</stringProp>

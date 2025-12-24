@@ -15,6 +15,8 @@ pipeline {
         stage('Build JMeter Image') {
             steps {
                 script {
+                    // Verify Docker is installed and accessible
+                    bat 'docker --version'
                     // Build the image locally so we have the latest version
                     bat 'docker build -t my-jmeter-runner .'
                 }

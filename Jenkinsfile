@@ -8,12 +8,15 @@ pipeline {
         string(name: 'LOOP_COUNT', defaultValue: '2', description: 'Number of loops')
         string(name: 'DURATION', defaultValue: '60', description: 'Duration in seconds')
         string(name: 'JMX_FILE', defaultValue: 'load_test.jmx', description: 'Path to JMX file')
+        string(name: 'TARGET_HOST', defaultValue: 'petstore.octoperf.com', description: 'Target Host URL')
     }
 
     stages {
         stage('Build JMeter Image') {
             steps {
                 script {
+                    // Verify Docker is installed and accessible
+                    bat 'docker --version'
                     // Build the image locally so we have the latest version
                     bat 'docker build -t my-jmeter-runner .'
                 }
@@ -42,6 +45,7 @@ pipeline {
                         -Jrampup=${params.RAMP_UP} ^
                         -Jloops=${params.LOOP_COUNT} ^
                         -Jduration=${params.DURATION} ^
+                        -Jhost=${params.TARGET_HOST} ^
                         -j jmeter.log
                     """
                 }
