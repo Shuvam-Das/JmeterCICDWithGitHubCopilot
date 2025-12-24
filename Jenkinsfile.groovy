@@ -6,7 +6,8 @@ pipeline {
         string(name: 'THREAD_COUNT', defaultValue: '10', description: 'Number of Virtual Users')
         string(name: 'RAMP_UP', defaultValue: '5', description: 'Ramp up time in seconds')
         string(name: 'LOOP_COUNT', defaultValue: '2', description: 'Number of loops')
-        string(name: 'JMX_FILE', defaultValue: 'tests/load_test.jmx', description: 'Path to JMX file')
+        string(name: 'DURATION', defaultValue: '60', description: 'Duration in seconds')
+        string(name: 'JMX_FILE', defaultValue: 'load_test.jmx', description: 'Path to JMX file')
     }
 
     stages {
@@ -27,7 +28,7 @@ pipeline {
                     bat 'mkdir report'
                     
                     // Run JMeter in Docker
-                    // We mount the current workspace (${PWD}) to /jmeter inside the container
+                    // We mount the current workspace (${WORKSPACE}) to /jmeter inside the container
                     bat """
                         docker run --rm ^
                         -v "${WORKSPACE}":/jmeter ^
@@ -39,7 +40,9 @@ pipeline {
                         -e -o report/html ^
                         -Jthreads=${params.THREAD_COUNT} ^
                         -Jrampup=${params.RAMP_UP} ^
-                        -Jloops=${params.LOOP_COUNT}
+                        -Jloops=${params.LOOP_COUNT} ^
+                        -Jduration=${params.DURATION} ^
+                        -j jmeter.log
                     """
                 }
             }
@@ -57,6 +60,8 @@ pipeline {
                 reportFiles: 'index.html',
                 reportName: 'JMeter Dashboard'
             ])
+            // Archive the JMeter log file so it is accessible in the Jenkins UI
+            archiveArtifacts artifacts: 'jmeter.log', allowEmptyArchive: true
         }
     }
 }
