@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // Build the image locally so we have the latest version
-                    sh 'docker build -t my-jmeter-runner .'
+                    bat 'docker build -t my-jmeter-runner .'
                 }
             }
         }
@@ -23,21 +23,22 @@ pipeline {
             steps {
                 script {
                     // Clean previous reports
-                    sh 'rm -rf report && mkdir -p report'
+                    bat 'if exist report rmdir /s /q report'
+                    bat 'mkdir report'
                     
                     // Run JMeter in Docker
-                    // We mount the current workspace (${PWD}) to /jmeter inside the container
-                    sh """
-                        docker run --rm \
-                        -v ${WORKSPACE}:/jmeter \
-                        -w /jmeter \
-                        my-jmeter-runner \
-                        -n \
-                        -t ${params.JMX_FILE} \
-                        -l report/result.jtl \
-                        -e -o report/html \
-                        -Jthreads=${params.THREAD_COUNT} \
-                        -Jrampup=${params.RAMP_UP} \
+                    // We mount the current workspace (${WORKSPACE}) to /jmeter inside the container
+                    bat """
+                        docker run --rm ^
+                        -v "${WORKSPACE}":/jmeter ^
+                        -w /jmeter ^
+                        my-jmeter-runner ^
+                        -n ^
+                        -t ${params.JMX_FILE} ^
+                        -l report/result.jtl ^
+                        -e -o report/html ^
+                        -Jthreads=${params.THREAD_COUNT} ^
+                        -Jrampup=${params.RAMP_UP} ^
                         -Jloops=${params.LOOP_COUNT}
                     """
                 }
