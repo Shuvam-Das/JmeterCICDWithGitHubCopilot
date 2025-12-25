@@ -4,6 +4,7 @@ pipeline {
     // Force Jenkins to use TCP to connect to Docker Desktop (bypassing the named pipe issue)
     environment {
         DOCKER_HOST = 'tcp://127.0.0.1:2375'
+        DOCKER_BUILDKIT = '0'
     }
 
     // Define parameters to change workload dynamically at runtime
