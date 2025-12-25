@@ -11,7 +11,7 @@ RUN apk add --no-cache openjdk11-jre curl tar bash
 
 # Download and Install JMeter
 RUN mkdir -p /opt && \
-    curl --retry 3 --retry-delay 5 -L https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz > /tmp/jmeter.tgz && \
+    curl --retry 3 --retry-delay 5 -f -L https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz -o /tmp/jmeter.tgz && \
     tar -xvf /tmp/jmeter.tgz -C /opt && \
     rm /tmp/jmeter.tgz
 
