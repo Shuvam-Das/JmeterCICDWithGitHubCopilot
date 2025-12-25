@@ -35,10 +35,14 @@ pipeline {
                     bat 'if exist report rmdir /s /q report'
                     bat 'mkdir report'
                     
+                    // Force remove any existing container with this name to prevent conflicts
+                    bat 'docker rm -f jmeter_gui_monitor || echo No existing container found'
+
                     // Run JMeter in Docker
                     // We mount the current workspace (${WORKSPACE}) to /jmeter inside the container
                     bat """
-                        docker run --rm ^
+                        docker run ^
+                        --name jmeter_gui_monitor ^
                         -v "${WORKSPACE}":/jmeter ^
                         -w /jmeter ^
                         my-jmeter-runner ^
